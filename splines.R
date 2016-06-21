@@ -58,4 +58,27 @@ write.table(Beagle, file="/home/roberto/Desktop/Splines/c1_Beagle.map", sep="\t"
 
 #### Predicting and outputting in Impute2 genetic map Format -----
 
+IMPUTE2 <- matrix(0, nrow = length(positions), ncol = 3) # IMPUTE2 genetic map format
+colnames(IMPUTE2) <- c("position", "COMBINED_rate.cM.Mb.", "Genetic_Map.cM.")
+
+IMPUTE2[,1] <- positions
+IMPUTE2[,3] <- GD
+
+for (i in 1:(dim(IMPUTE2)[1]-1)){
+  # CM between markers
+  cm <- IMPUTE2[i+1,3] - IMPUTE2[i,3]
+  # Mb between markers
+  mb <- IMPUTE2[i+1,1] - IMPUTE2[i,1]
+  # Recombination Rate
+  rr <- cm/(mb/1000000)
+  IMPUTE2[i,2] <- rr
+}
+
+#remove last marker from the data.frame
+IMPUTE2 <- IMPUTE2[-1991815,]
+
+# Export the data frame in IMPUTE2 format
+write.table(IMPUTE2, file="/home/roberto/Desktop/Splines/c1_IMPUTE2.map", sep="\t", quote = F, row.names = F, col.names = T)
+
+
 
