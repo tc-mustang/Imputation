@@ -30,6 +30,32 @@ legend("topleft",
        col = c("green", "blue", "red"), lty = 1, bty = "n")
 
 
+#### Predicting and outputting in Beagle genetic map Format -----
 
+# Upload the hapmap positions (C1_physical.txt)
+
+c1_physical <- read.delim("~/Desktop/Splines/c1_physical.txt", header=FALSE, comment.char="#")
+
+positions <- c1_physical[,2] # vector of positions
+
+# Use Rspline (Roberto spline) to predict the genetic positions
+
+GD  <- Rspline(positions)
+GDl <- Rlinear(positions) 
+
+cor(GD[40000:800000],GDl[40000:800000])
+
+Beagle <- matrix(0, nrow = length(positions), ncol = 4) # Beagle genetic map format
+
+Beagle[,1] <- 1
+Beagle[,2] <- "."
+Beagle[,3] <- GD
+Beagle[,4] <- positions
+
+
+# Export the data frame in Beagle format
+write.table(Beagle, file="/home/roberto/Desktop/Splines/c1_Beagle.map", sep="\t", quote = F, row.names = F, col.names = F)
+
+#### Predicting and outputting in Impute2 genetic map Format -----
 
 
