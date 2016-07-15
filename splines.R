@@ -85,10 +85,24 @@ write.table(IMPUTE2, file="/home/roberto/Desktop/Splines/c1_IMPUTE2.map", sep="\
 
 require(graphics)
 
-## Load the file with chromosome/genetic position/physical position [Chromosome I as a test]
 
-GM_short <- read.delim("~/Desktop/Splines/GM_short.txt", header=FALSE) # Original Genetic Map
-GM_long <- read.delim("~/Desktop/Splines/GM_long.txt", header=FALSE)   # File Jessen sent
+
+
+######## Load the file with chromosome/genetic position/physical position [All Chromosomes now] -----
+
+GM_long <- read.delim("~/Desktop/genetic.map", header=FALSE)   # File Jessen sent
 
 genetic <- GM_long[,2]
 physical <- GM_long[,3]
+
+## Splines interpolation
+
+Rspline <- splinefun(physical, genetic, method = "hyman")
+
+
+
+## Linear Interpolation:
+
+x <- physical
+y <- genetic
+Rlinear <- approxfun(x, y)
