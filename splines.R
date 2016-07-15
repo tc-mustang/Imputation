@@ -34,20 +34,22 @@ legend("topleft",
 
 # Upload the hapmap positions (C1_physical.txt)
 
-c1_physical <- read.delim("~/Desktop/Splines/c1_physical.txt", header=FALSE, comment.char="#")
+c1_physical <- read.delim("/home/roberto/Desktop/c1_physical.txt", header=FALSE, comment.char="#")
+
 
 positions <- c1_physical[,2] # vector of positions
+chromo <- c1_physical[,1] #vector of chromosomes
 
 # Use Rspline (Roberto spline) to predict the genetic positions
 
 GD  <- Rspline(positions)
 GDl <- Rlinear(positions) 
 
-cor(GD[40000:800000],GDl[40000:800000])
+#cor(GD[40000:800000],GDl[40000:800000])
 
 Beagle <- matrix(0, nrow = length(positions), ncol = 4) # Beagle genetic map format
 
-Beagle[,1] <- 1
+Beagle[,1] <- chromo
 Beagle[,2] <- "."
 Beagle[,3] <- GD
 Beagle[,4] <- positions
@@ -81,4 +83,12 @@ IMPUTE2 <- IMPUTE2[-1991815,]
 write.table(IMPUTE2, file="/home/roberto/Desktop/Splines/c1_IMPUTE2.map", sep="\t", quote = F, row.names = F, col.names = T)
 
 
+require(graphics)
 
+## Load the file with chromosome/genetic position/physical position [Chromosome I as a test]
+
+GM_short <- read.delim("~/Desktop/Splines/GM_short.txt", header=FALSE) # Original Genetic Map
+GM_long <- read.delim("~/Desktop/Splines/GM_long.txt", header=FALSE)   # File Jessen sent
+
+genetic <- GM_long[,2]
+physical <- GM_long[,3]
