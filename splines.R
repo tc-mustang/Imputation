@@ -86,23 +86,43 @@ write.table(IMPUTE2, file="/home/roberto/Desktop/Splines/c1_IMPUTE2.map", sep="\
 require(graphics)
 
 
-
+#####################################################################################################
 
 ######## Load the file with chromosome/genetic position/physical position [All Chromosomes now] -----
 
+#####################################################################################################
+
+
+setwd("/home/DB2/Imputation/Splines/")
 GM_long <- read.delim("~/Desktop/genetic.map", header=FALSE)   # File Jessen sent
 
-genetic <- GM_long[,2]
-physical <- GM_long[,3]
+for (i in 1:9){
+  chromosome <- paste("Chromosome0", i, sep = "")
 
-## Splines interpolation
+  genetic <- as.numeric(as.character(GM_long[grep(chromosome, GM_long[,1]),3]))
+  physical <- as.numeric(as.character(GM_long[grep(chromosome, GM_long[,1]),4]))
 
-Rspline <- splinefun(physical, genetic, method = "hyman")
+  ## Splines interpolation
+  Rspline <- splinefun(physical, genetic, method = "hyman")
 
+  # Upload the hapmap positions (C1_physical.txt)
+  
+  posiciones <- paste("chr",i,".physical", sep = "")
+  
+  positions_hapmap <- read.delim(posiciones, header=FALSE, comment.char="#")
+  positions <- positions_hapmap[,1] # vector of positions
+  
+  # Use Rspline (Roberto spline) to predict the genetic positions
+  GD  <- Rspline(positions)
+  
+  Beagle <- matrix(0, nrow = length(positions), ncol = 4) # Beagle genetic map format
+  
+  Beagle[,1] <- i
+  Beagle[,2] <- "."
+  Beagle[,3] <- GD
+  Beagle[,4] <- positions
 
-
-## Linear Interpolation:
-
-x <- physical
-y <- genetic
-Rlinear <- approxfun(x, y)
+  output <- paste("chr",i,"_Beagle.map", sep = "")
+  # Export the data frame in Beagle format
+  write.table(Beagle, file=output, sep="\t", quote = F, row.names = F, col.names = F)
+}
