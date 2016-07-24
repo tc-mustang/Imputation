@@ -96,8 +96,8 @@ require(graphics)
 setwd("/home/DB2/Imputation/Splines/")
 GM_long <- read.delim("~/Desktop/genetic.map", header=FALSE)   # File Jessen sent
 
-for (i in 1:9){
-  chromosome <- paste("Chromosome0", i, sep = "")
+for (i in 10:18){
+  chromosome <- paste("Chromosome", i, sep = "")
 
   genetic <- as.numeric(as.character(GM_long[grep(chromosome, GM_long[,1]),3]))
   physical <- as.numeric(as.character(GM_long[grep(chromosome, GM_long[,1]),4]))
