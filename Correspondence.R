@@ -43,21 +43,33 @@ library(rrBLUP)
 library(gplots)
 
 y <- K
+
 a <- heatmap.2(y, col=bluered, tracecol="#303030",
                margins = c(9, 12))
 
 #Getting some numbers:
 
 matrix_round <-  round(matriz3)
+mini <- matrix_round[sort(rownames(matrix_round)[6:23]),]
 
-a <- as.numeric(matrix_round[17,])
-b <- as.numeric(matrix_round[4,])
+a <- as.numeric(matrix_round[5,])
+tmp <- vector()
 
-counter <- 1
-for (i in 1:length(a)){
-  if (a[i]==b[i]){counter = counter + 1}
+for (f in 1:18) {  
+  b <- as.numeric(mini[f,])
+
+  counter <- 1
+  for (i in 1:length(a)){
+    if (a[i]==b[i]){counter = counter + 1}
+  }
+  tmp <- c(tmp, counter/length(a))
 }
-counter/length(a)
+
+Percentage[,5] <- tmp
+
+write.table(Percentage, file='/home/roberto/Desktop/table',sep = "\t", quote = F, col.names = F, row.names = F)
+
+
 
 ############################################################################################################
 
