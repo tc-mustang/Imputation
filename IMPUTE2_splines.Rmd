@@ -1,0 +1,94 @@
+---
+title: "R Notebook"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+Genetic Map in IMPUTE2 format for all the chromosomes:
+We will be extracting the positions 
+
+```{r}
+
+chromosome1 <- read.delim2("/home/DB2/Imputation/Splines/chr1_Beagle.map", header = F, stringsAsFactors = F)
+cM <- chromosome1[,3]
+physical <- chromosome1[,4]
+IMPUTE2 <- matrix(0, nrow = length(physical), ncol = 3) # IMPUTE2 genetic map format
+colnames(IMPUTE2) <- c("position", "COMBINED_rate.cM.Mb.", "Genetic_Map.cM.")
+IMPUTE2[,1] <- as.numeric(physical)
+IMPUTE2[,3] <- as.numeric(cM)
+
+
+```
+
+Now we will calculate the Recombination rate for chromosome 1:
+
+```{r}
+
+for (i in 1:(dim(IMPUTE2)[1]-1)){
+  # CM between markers
+  cm <- as.numeric(IMPUTE2[i+1,3]) - as.numeric(IMPUTE2[i,3])
+  # Mb between markers
+  mb <- as.numeric(IMPUTE2[i+1,1]) - as.numeric(IMPUTE2[i,1])
+  # Recombination Rate
+  rr <- cm/(mb/1000000)
+  if (rr > 600){
+    IMPUTE2[i,2] <- 0
+  }else{
+    IMPUTE2[i,2] <- rr
+  }
+}
+  
+
+```
+
+Plotting the first chunk of the chromosome
+
+```{r}
+
+plot(IMPUTE2[1:25000,2])
+
+```
+
+Now calculate the map in IMPUTE2 format for everything
+
+```{r}
+
+setwd("/home/DB2/Imputation/Splines/")
+
+for (j in 1:18){
+  chromosome <- paste("chr", j, "_Beagle.map", sep = "")
+  
+  chromosome1 <- read.delim2(chromosome, header = F, stringsAsFactors = F)
+  cM <- chromosome1[,3]
+  physical <- chromosome1[,4]
+  IMPUTE2 <- matrix(0, nrow = length(physical), ncol = 3) # IMPUTE2 genetic map format
+  colnames(IMPUTE2) <- c("position", "COMBINED_rate.cM.Mb.", "Genetic_Map.cM.")
+  IMPUTE2[,1] <- as.numeric(physical)
+  IMPUTE2[,3] <- as.numeric(cM)
+    
+  for (i in 1:(dim(IMPUTE2)[1]-1)){
+  # CM between markers
+  cm <- as.numeric(IMPUTE2[i+1,3]) - as.numeric(IMPUTE2[i,3])
+  # Mb between markers
+  mb <- as.numeric(IMPUTE2[i+1,1]) - as.numeric(IMPUTE2[i,1])
+  # Recombination Rate
+  rr <- cm/(mb/1000000)
+  if (rr > 600){
+    IMPUTE2[i,2] <- 0
+  }else{
+    IMPUTE2[i,2] <- rr
+    }
+  }
+  
+  output <- paste("chr",j,"_Impute2.map", sep = "")
+  # Export the data frame in Beagle format
+  write.table(IMPUTE2, file=output, sep="\t", quote = F, row.names = F, col.names = T)
+}
+
+```
+
+
+
+
+
