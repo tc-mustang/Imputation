@@ -56,7 +56,7 @@ Now calculate the map in IMPUTE2 format for everything
 
 setwd("/home/DB2/Imputation/Splines/")
 
-for (j in 1:18){
+for (j in 1:18) {
   chromosome <- paste("chr", j, "_Beagle.map", sep = "")
   
   chromosome1 <- read.delim2(chromosome, header = F, stringsAsFactors = F)
