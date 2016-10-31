@@ -20,12 +20,14 @@ out = sys.argv[3];
 
 with gzip.open(vcf, 'rb') as f, gzip.open('%s.vcf.gz' %(out), 'wb') as f_out:
     
-    head = list(islice(f, 11))
+    head = list(islice(f, 10))
     for elements in head:
             f_out.write(elements)
     
     for lines in f:
-        ar2 = re.findall("AR2=\d.\d\d", lines[1:350])
-        if ar2[0][4:8] > thresh :
-            f_out.write(lines)
+        ar2 = re.findall("AR2=\d.*?\d*?\d*?;", lines[1:350])
+        lenght = len(ar2[0])-1
+	ar = float(ar2[0][4:lenght])
+	if ar > float(thresh) :
+		f_out.write(lines)
             
